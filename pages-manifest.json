@@ -1,0 +1,35 @@
+{
+  "schema": "b8g.gh-pages-manifest.v1",
+  "repo": "awesome-os/lemanschik.com",
+  "cname": "lemanschik.com",
+  "fileCount": 5,
+  "totalBytes": 1557692,
+  "skippedLargeFiles": [],
+  "files": [
+    {
+      "path": "github-profile/README.md",
+      "bytes": 9866,
+      "sha256": "9fb9583b7dd98a78b9d998a08780e445e739536cfdf49e099f8ffe6b017ebd97"
+    },
+    {
+      "path": "github-profile/architecture-diagram.svg",
+      "bytes": 8028,
+      "sha256": "d656346aeed56f867896cc1d59d665b9f088f4480a1a57c1896364267118e53f"
+    },
+    {
+      "path": "github-profile/header.svg",
+      "bytes": 5450,
+      "sha256": "6484e0df7e982302d36a3f2f9b601b9c562ddfedb40a048e4e521f169bc27383"
+    },
+    {
+      "path": "index.html",
+      "bytes": 18474,
+      "sha256": "516464fadc879df5bc60415ed09a97a2c8c54ea89455c96b120a96456c825120"
+    },
+    {
+      "path": "x-header-happy-white-dragon.png",
+      "bytes": 1515874,
+      "sha256": "043811605d66f1d37bbaf2a1033e0f8afb7361eab34fe552aa0825bce8649b8f"
+    }
+  ]
+}

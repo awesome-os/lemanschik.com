@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Frank Lemanschik — Algebraic ABI-Driven OS Architecture (Sectium · B8G · StealifyLang)</title>
+  <meta name="description" content="Frank Lemanschik — Creator of Algebraic ABI-Driven OS Architecture (Intersection-Oriented Computing): Sectium Core, B8G Additions &amp; Toolchains, StealifyLang Algebraic Frontend, and Empirical Chromium / Chrome / Edge / Sectium Stack Comparison." />
+  <style>
+    :root {
+      --bg: #090c10;
+      --surface: #0f141b;
+      --surface-2: #141b24;
+      --border: #232d3b;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --amber: #d29922;
+      --red: #f85149;
+      --mono: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      font-family: var(--mono);
+      font-size: 0.86em;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.1em 0.38em;
+      border-radius: 5px;
+      color: #c9d1d9;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px;
+      margin-bottom: 44px;
+    }
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: clamp(2rem, 4.2vw, 3rem);
+      line-height: 1.12;
+      margin: 0 0 14px;
+      letter-spacing: -0.025em;
+    }
+    .lead {
+      font-size: 1.12rem;
+      color: #c9d1d9;
+      max-width: 780px;
+      margin: 0 0 20px;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+    }
+    .pill.good { border-color: rgba(63, 185, 80, 0.45); color: var(--green); }
+    section { margin-bottom: 56px; }
+    h2 {
+      font-size: 1.45rem;
+      letter-spacing: -0.015em;
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .num {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.12);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .sub {
+      color: var(--muted);
+      margin: 0 0 24px;
+      max-width: 820px;
+    }
+    .lineage-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--amber);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+    .lineage-box strong { color: var(--text); }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+    .card-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      line-height: 1.3;
+    }
+    .card p {
+      margin: 0;
+      color: #c9d1d9;
+      font-size: 0.93rem;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .kpi.sovereign { border-color: rgba(63, 185, 80, 0.5); }
+    .kpi .label {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .kpi .val {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin: 4px 0;
+      letter-spacing: -0.02em;
+    }
+    .kpi.sovereign .val { color: var(--green); }
+    .kpi .note { font-size: 0.82rem; color: var(--muted); }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      margin-bottom: 22px;
+    }
+    table {
+      width: 100%;
+      min-width: 860px;
+      table-layout: fixed;
+      border-collapse: collapse;
+      font-size: 0.89rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+    th {
+      background: var(--surface-2);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #c9d1d9;
+    }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+    .b-open { background: rgba(63, 185, 80, 0.14); color: var(--green); border: 1px solid rgba(63, 185, 80, 0.35); }
+    .b-closed { background: rgba(248, 81, 73, 0.12); color: var(--red); border: 1px solid rgba(248, 81, 73, 0.35); }
+    .b-opt { background: rgba(210, 153, 34, 0.14); color: var(--amber); border: 1px solid rgba(210, 153, 34, 0.35); }
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">lemanschik.com · Systems Architecture Profile</div>
+      <h1>Frank Lemanschik</h1>
+      <p class="lead">
+        <strong>Creator of Algebraic ABI-Driven OS Architecture (Intersection-Oriented Computing)</strong> —
+        built on one coherent 3-pillar stack: <strong>Sectium</strong> (open-source BSD-3 Chromium core, <code>0</code> closed Google/Microsoft DLLs),
+        <strong>B8G</strong> (OS/ABI runtime, zero-copy <code>B8G_ARENA_V1</code>, strangler-fig shims &amp; CAS toolchains), and
+        <strong>StealifyLang</strong> (algebraic language helper &amp; compiler frontend).
+      </p>
+      <div class="meta-row">
+        <span class="pill good">Sectium · B8G · StealifyLang Founder</span>
+        <span class="pill">v8/AUTHORS:154</span>
+        <span class="pill">Author · The White Dragon Book &amp; Lumi</span>
+        <a class="pill" href="mailto:frank@dspeed.eu">frank@dspeed.eu</a>
+        <a class="pill" href="https://awesome-os.com" rel="noopener">awesome-os.com</a>
+      </div>
+    </header>
+
+    <!-- SECTION 1: INNOVATIONS -->
+    <section id="innovations">
+      <h2><span class="num">01</span> Core Innovations — Algebraic ABI-Driven OS Architecture</h2>
+      <p class="sub">
+        Engineering claims held to an <strong>Unassailable vs. Assailable</strong> standard: explicit credit to prior art,
+        and exact isolation of what is genuinely first-of-its-kind.
+      </p>
+
+      <div class="lineage-box">
+        <strong>Honest Lineage (Why We Don't Claim to Have Invented ABIs Generically):</strong>
+        Binary-first boundaries stand on giants — <strong>Microsoft COM / WinRT</strong> (1993+, cross-language vtable ABIs),
+        <strong>Google Fuchsia / Zircon FIDL</strong> (2016+, capability-gated IPC),
+        <strong>WASI Component Model / WIT</strong> (2022+, canonical sandbox ABIs), and
+        <strong>Apache Arrow / Cap'n Proto / seL4</strong> (zero-copy layouts &amp; formal capability tokens).
+        What is new in <strong>Sectium (Core) + B8G (Additions &amp; Toolchains) + StealifyLang (Algebraic Frontend)</strong> is unifying all three breakthroughs below into one composable OS fabric:
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-tag">Innovation 01 · StealifyLang &amp; B8G Memory Geometry</div>
+          <h3>Zero-Copy Intersection-Oriented ABI (Not Message Passing)</h3>
+          <p>
+            COM, FIDL, and WIT still marshal and copy messages across boundaries. With <strong>StealifyLang</strong> over
+            <strong>B8G</strong>, overlapping apps and services literally <strong>intersect</strong> (<code>defineSection</code> / <code>intersect</code>)
+            onto the exact same 64B-aligned <code>B8G_ARENA_V1</code> physical slots using formal algebraic operators:
+            <code>wedge (^)</code>, <code>meet (&amp;)</code>, <code>project (|&gt;)</code>, and <code>evolve (∇)</code> with O(1) CoW rollback.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="card-tag">Innovation 02 · StealifyLang Execution Algebra</div>
+          <h3>7-Tuple Execution Context Algebra &amp; Persona Isolation</h3>
+          <p>
+            Every call, window, and daemon is gated by <code>C_cloud = (B, D, L, T, κ, Λ, Ω)</code> —
+            Boundary, Display Reachability, Process Lifetime, Local OS-Pipe Purity (<code>B8G016</code>), Capability Epoch,
+            Data Sovereignty, and Persona Plane (<code>Ω</code>). Normal users (<code>Ω = consumer</code>) project DevOps telemetry
+            to <code>∅</code> (zero overhead), while SREs and AI emergency workers share one single-claim <code>b8g-devops</code> hub.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="card-tag">Innovation 03 · B8G on Sectium Core</div>
+          <h3>Full-Stack Strangler-Fig ABI Virtualization</h3>
+          <p>
+            Instead of rewriting the world, <strong>B8G</strong> additions intercept legacy bloat seams onto one shared open-source
+            <strong>Sectium</strong> core, <code>B8G_ARENA_V1</code> arena, and singleton OS pipe:
+            CEF (<code>libcef.dll</code> → <code>174 KB</code> shim), installed Electron apps (<code>--asar</code> zero-mutation launcher),
+            Wayland (<code>b8g-wl-shim</code>), Win64/DOS/.NET 4-tier boxing, <code>.b8p</code> CAS builds, and
+            7-arch T2-SDE CoW-VFS overlays (<code>web-posix</code>).
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CHROME STACK COMPARISON MATRIX -->
+    <section id="chrome-stack">
+      <h2><span class="num">02</span> Empirical Browser Stack Comparison Matrix</h2>
+      <p class="sub">
+        <strong>Chromium</strong> is open source (BSD-3-Clause), and <strong>Sectium</strong> is our open-source BSD-3 Chromium core &amp; main fundament powering <strong>B8G</strong> additions.
+        <strong>Google Chrome</strong> and <strong>Microsoft Edge</strong> are proprietary closed-source distributions built atop Chromium. Below is the exact feature delta paired with a
+        <strong>machine-verified Windows 11 binary audit</strong> (2026-11-22) and Chromium source-hook count
+        (<code>12</code> <code>is_chrome_branded</code> GN hooks + <code>33</code> <code>GOOGLE_CHROME_BRANDING</code> C++ hooks verified in <code>chrome/</code>).
+      </p>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="label">Google Chrome 157.0.8103.79</div>
+          <div class="val">296.10 MB</div>
+          <div class="note"><code>chrome.dll</code> + 33.86 MB closed AI DLLs + 25.06 MB <code>resources.pak</code></div>
+        </div>
+        <div class="kpi">
+          <div class="label">Microsoft Edge 158.0.4370.33</div>
+          <div class="val">599.88 MB</div>
+          <div class="note"><code>msedge.dll</code> (367.81) + <code>msedge_renderer.dll</code> (232.07) + 35.62 MB pak</div>
+        </div>
+        <div class="kpi sovereign">
+          <div class="label">Sectium (Open Source · 0 Closed DLLs)</div>
+          <div class="val">0 Closed DLLs</div>
+          <div class="note">21.19 MB <code>resources.pak</code> · 0 telemetry · 0 updaters · 0 DRM blobs · runs B8G</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width: 15%" />
+            <col style="width: 18%" />
+            <col style="width: 23%" />
+            <col style="width: 23%" />
+            <col style="width: 21%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Stock Chromium <span class="badge b-open">Open Source</span></th>
+              <th>Google Chrome Additions <span class="badge b-closed">is_chrome_branded</span></th>
+              <th>Microsoft Edge Additions <span class="badge b-closed">Closed Fork</span></th>
+              <th>Does Sectium Need It?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Media Codecs</strong></td>
+              <td>Open codecs only (VP8/VP9, AV1, Opus, Vorbis, FLAC, Theora)</td>
+              <td>Proprietary <code>proprietary_codecs=true</code> (H.264, AAC, HEVC/H.265 patent-licensed builds)</td>
+              <td>H.264, AAC, HEVC (via Windows Media Foundation hardware decode)</td>
+              <td><span class="badge b-opt">Optional</span> Use OS HW decode / OpenH264 — zero licensing lock-in</td>
+            </tr>
+            <tr>
+              <td><strong>2. DRM / EME</strong></td>
+              <td>EME API shell only (no CDM binary)</td>
+              <td><strong>Widevine CDM</strong> (closed binary component)</td>
+              <td><strong>PlayReady CDM</strong> (hardware SL3000 4K Netflix) + <strong>Widevine CDM</strong></td>
+              <td><span class="badge b-opt">Opt-In Plugin</span> User plugin only (never baked into core OS)</td>
+            </tr>
+            <tr>
+              <td><strong>3. Auto-Updater</strong></td>
+              <td>None</td>
+              <td><strong>Omaha / <code>GoogleUpdate</code> (<code>ChromeUpdater</code>)</strong> background service</td>
+              <td><strong><code>MicrosoftEdgeUpdate</code></strong> background service</td>
+              <td><span class="badge b-open">NO</span> Replaced by <code>.b8p</code> CAS + <code>t2-sde-b8g</code> CoW epochs</td>
+            </tr>
+            <tr>
+              <td><strong>4. Identity &amp; Sync</strong></td>
+              <td>Sync protocol code (no keys)</td>
+              <td>Google OAuth API keys, Chrome Sync, Google Password Manager, Payment/Autofill cloud</td>
+              <td>Microsoft Account (MSA/Entra ID) Sync, Wallet, Workspaces</td>
+              <td><span class="badge b-open">NO</span> Replaced by sovereign <code>CapabilityToken</code> + local CAS</td>
+            </tr>
+            <tr>
+              <td><strong>5. Telemetry &amp; Crash</strong></td>
+              <td>Crashpad client (disabled)</td>
+              <td><strong>UMA / UKM</strong> metrics, <strong>RLZ</strong> attribution tracking, Google Crash Reporting</td>
+              <td>Microsoft Diagnostic Data, SmartScreen telemetry, Watson crash reporting</td>
+              <td><span class="badge b-open">NO</span> Replaced by opt-in <code>intersections/b8g-devops</code> (<code>Ω = consumer ⇒ ∅</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>6. Security Services</strong></td>
+              <td>Safe Browsing client (no keys)</td>
+              <td><strong>Google Safe Browsing</strong> (real-time URL/phishing/download scanning), Enhanced Protection</td>
+              <td><strong>Microsoft Defender SmartScreen</strong> + Super Duper Secure Mode (V8 JIT toggle)</td>
+              <td><span class="badge b-opt">Optional</span> Local capability/sandbox + <code>B8G</code> admissibility gates</td>
+            </tr>
+            <tr>
+              <td><strong>7. AI &amp; On-Device Models</strong></td>
+              <td><code>optimization_guide</code> plumbing only</td>
+              <td><strong>Gemini Nano</strong> on-device model download, Chrome AI writing/tab-organizer, Google Lens</td>
+              <td><strong>Copilot Sidebar</strong>, Bing Shopping/Coupons, Read Aloud (Azure TTS), Collections</td>
+              <td><span class="badge b-open">NO</span> Replaced by sovereign <code>intersections/b8g-moe-gate</code> (local MoE / AtlasKV)</td>
+            </tr>
+            <tr>
+              <td><strong>8. OS &amp; Embedder Surfaces</strong></td>
+              <td>Standard desktop binary</td>
+              <td>Google Chrome branding, ChromeOS Ash integration, Google Print/Cast (<code>MediaRouter</code> Cast SDK)</td>
+              <td><strong>WebView2</strong> system runtime, IE Mode (Trident COM bridge), Vertical Tabs, Split Screen, Sleeping Tabs</td>
+              <td><span class="badge b-open">NO</span> Replaced by <code>b8g-electron</code> + <code>b8g-cef-shim</code> + <code>b8g-wl-shim</code></td>
+            </tr>
+            <tr>
+              <td><strong>9. Enterprise / Policy</strong></td>
+              <td>Base Policy engine</td>
+              <td>Chrome Enterprise Core / Cloud Management (CBCM)</td>
+              <td>Microsoft Intune / Group Policy / Entra ID Conditional Access</td>
+              <td><span class="badge b-open">NO</span> Replaced by 7-Tuple <code>C_cloud</code> CISO Sovereignty Gate</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <span>© Frank Lemanschik · <code>lemanschik.com</code></span>
+      <span><em>„Nunquam ante, numquam iterum“</em> — Zero-copy, zero bloat, unassailable invariants.</span>
+    </footer>
+  </div>
+</body>
+</html>
