@@ -1,7 +1,8 @@
 {
   "schema": "b8g.gh-pages-manifest.v1",
   "repo": "awesome-os/lemanschik.com",
-  "cname": "lemanschik.com",
+  "cname": "awesome-os.github.io",
+  "url": "https://awesome-os.github.io/lemanschik.com/",
   "fileCount": 5,
   "totalBytes": 1557692,
   "skippedLargeFiles": [],
